@@ -1,4 +1,3 @@
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fundoo_notes/UI/main_screen.dart';
@@ -7,16 +6,20 @@ import 'package:fundoo_notes/UI/view_archive_notes.dart';
 import 'package:fundoo_notes/style/button_style.dart';
 import 'package:fundoo_notes/style/colors.dart';
 
-
-class SideMenu extends StatelessWidget {
-
+class SideMenu extends StatefulWidget {
   const SideMenu({super.key});
 
+  @override
+  State<SideMenu> createState() => _SideMenuState();
+}
+
+class _SideMenuState extends State<SideMenu> {
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  bool isActiveTab = false;
 
   @override
-
   Widget build(BuildContext context) {
-    final FirebaseAuth _auth = FirebaseAuth.instance;
     return Drawer(
       backgroundColor: allRoutesBG,
       child: SafeArea(
@@ -51,20 +54,7 @@ class SideMenu extends StatelessWidget {
             const SizedBox(height: 14),
             _myArchivesSection(context),
             const SizedBox(height: 14),
-            TextButton(
-                style: buttonStyle,
-                onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>const SettingsRoute()));
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const Icon(Icons.settings, size: 25,color: Colors.white,),
-                    const SizedBox(width: 30),
-                    _sideMenuText("Settings")
-                  ],
-                ))
-
+            _settings(context)
             // drawer menu-bar items ends
           ],
         ),
@@ -72,10 +62,11 @@ class SideMenu extends StatelessWidget {
     );
   }
 
+  // SIDE MENU TABS
   Widget _myNotesSection(BuildContext context) =>
       TextButton(
           style: buttonStyle,
-          onPressed: (){
+          onPressed: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) => const MainRoute()));
           },
           child: Row(
@@ -102,6 +93,20 @@ class SideMenu extends StatelessWidget {
             ],
           )
       );
+  Widget _settings(BuildContext context) =>
+      TextButton(
+          style: buttonStyle,
+          onPressed: (){
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>const SettingsRoute()));
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const Icon(Icons.settings, size: 25,color: Colors.white,),
+              const SizedBox(width: 30),
+              _sideMenuText("Settings")
+            ],
+          ));
 
   Widget _sideMenuText(String tabName) =>
       Text(tabName, style: const TextStyle(fontSize: 16,

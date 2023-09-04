@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:fundoo_notes/UI/display_archive_note.dart';
 import 'package:fundoo_notes/UI/display_note.dart';
 import 'package:fundoo_notes/UI/side_menu.dart';
 import 'package:fundoo_notes/services/firestore_db.dart';
@@ -121,9 +122,11 @@ class _ViewArchivedNotesState extends State<ViewArchivedNotes> {
                 await Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => DisplayNote(note: archivedNotesList[index])));
-                archivedNotesList = await FirestoreDB.getAllNotesData();
-                setState(() {});
+                        builder: (context) => DisplayArchiveNotes(note: archivedNotesList[index])));
+                archivedNotesList = await FirestoreDB.fetchArchiveNotes();
+                setState(() {
+
+                });
 
               },
               child: Container(

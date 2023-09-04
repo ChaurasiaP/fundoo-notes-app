@@ -21,13 +21,14 @@ class _LoginPageState extends State<LoginPage> {
   // controllers to handle user input email and password
   TextEditingController userNameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  bool stayLoggedIn = false;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     userNameController.text = "pranshu1431@gmail.com";
-    passwordController.text = "dob@1234";
+    passwordController.text = "123456";
   }
   @override
   Widget build(BuildContext context) {
@@ -57,7 +58,7 @@ class _LoginPageState extends State<LoginPage> {
               padding: const EdgeInsets.only(top: 10, bottom: 10),
               child: _passwordField()),
           Padding(
-              padding: const EdgeInsets.only(top: 30),
+              padding: const EdgeInsets.only(top: 15),
               child: _actionButtons())
         ],
       ),
@@ -93,17 +94,26 @@ class _LoginPageState extends State<LoginPage> {
   Widget _actionButtons() => Column(
     children: [
       // sign in button
-      ElevatedButton(
-          onPressed: () => _checkCredentials(),
-          style: ElevatedButton.styleFrom(backgroundColor: buttonsColor),
-          child: const SizedBox(
-            width: double.infinity,
-            child: Text(
-              "Sign in",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 18),
-            ),
-          )),
+      Column(
+        children: [
+          const Row(
+            children: [
+              Text("Stay signed in"),
+            ],
+          ),
+          ElevatedButton(
+              onPressed: () => _checkCredentials(),
+              style: ElevatedButton.styleFrom(backgroundColor: buttonsColor),
+              child: const SizedBox(
+                width: double.infinity,
+                child: Text(
+                  "Sign in",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18),
+                ),
+              )),
+        ],
+      ),
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

@@ -25,14 +25,11 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  late bool isLogin = false;
+  bool isLogin = false;
 
   getLoggedInState() async {
-    await LocalDataSaver.getLogData().then((value) {
-      setState(() {
-        isLogin = value.toString() == "null";
-      });
-    });
+    var getState = await LocalDataSaver.getLogData();
+    getState! ? isLogin = true : isLogin = false;
   }
 
   @override
@@ -44,6 +41,6 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
 
-        home: LoginPage());
+        home: isLogin ? const MainRoute() : const LoginPage());
   }
 }

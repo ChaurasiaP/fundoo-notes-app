@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:fundoo_notes/UI/add_new_note.dart';
 import 'package:fundoo_notes/UI/display_note.dart';
+import 'package:fundoo_notes/UI/search_page.dart';
 import 'package:fundoo_notes/UI/side_menu.dart';
 import 'package:fundoo_notes/services/firestore_db.dart';
 import 'package:fundoo_notes/services/my_note_model.dart';
@@ -20,6 +21,8 @@ class _MainRouteState extends State<MainRoute> {
 
 
   List<Note> notesList = [];
+  bool isListView = false;
+  var viewMode = const Icon(Icons.list_outlined);
 
   // declaring a global key to enable drawer expansion, where required
   final GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
@@ -46,8 +49,7 @@ class _MainRouteState extends State<MainRoute> {
     fetchNotes() ;
   }
 
-  bool isListView = false;
-  var viewMode = const Icon(Icons.list_outlined);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,7 +81,7 @@ class _MainRouteState extends State<MainRoute> {
                   _drawerBarIcon(),
                   _searchBar(),
                   _changeViewMode(),
-                  _searchButton()
+                  //_searchButton()
                 ],
               ),
             ),
@@ -97,7 +99,7 @@ class _MainRouteState extends State<MainRoute> {
                   builder: (context) =>
                   const AddNewNote())
           ); // routing to another screen ( AddNewNote() ) to add new note
-          notesList = await FirestoreDB.getAllNotesData();
+          notesList = await FirestoreDB.getNotesData();
           setState(() {
 
           });
@@ -120,16 +122,16 @@ class _MainRouteState extends State<MainRoute> {
       icon: Icon(Icons.menu, color: buttonsColor));
 
   // search bar
-  Widget _searchBar() => Container(
-    alignment: Alignment.centerLeft,
-    height: MediaQuery.of(context).size.height * 0.5,
-    width: MediaQuery.of(context).size.width * 0.5,
-    decoration: const BoxDecoration(),
-    child: const TextField(
-      decoration: InputDecoration(
-        border: InputBorder.none,
-        hintText: "Search Your Notes",
-      ),
+  Widget _searchBar() => GestureDetector(
+    onTap: (){
+      Navigator.push(context, MaterialPageRoute(builder: (context)=> SearchNote()));
+    },
+    child: Container(
+      alignment: Alignment.centerLeft,
+      height: MediaQuery.of(context).size.height * 0.5,
+      width: MediaQuery.of(context).size.width * 0.5,
+      decoration: const BoxDecoration(),
+      child: Text("Search Your Notes", style: hintTextStyle)
     ),
   );
 
@@ -149,7 +151,9 @@ class _MainRouteState extends State<MainRoute> {
 // search icon
   Widget _searchButton() =>
       IconButton(
-          onPressed: () {}, icon: Icon(Icons.search_rounded, color: buttonsColor));
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const SearchNote()));
+          }, icon: Icon(Icons.search_rounded, color: buttonsColor));
 
   Widget _displayNotes() => Expanded(
     child: MasonryGridView.count(
@@ -164,7 +168,7 @@ class _MainRouteState extends State<MainRoute> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => DisplayNote(note: notesList[index])));
-            notesList = await FirestoreDB.getAllNotesData();
+            notesList = await FirestoreDB.getNotesData();
             setState(() {});
 
           },
@@ -206,7 +210,7 @@ class _MainRouteState extends State<MainRoute> {
   }
 
   void fetchNotes() async {
-    notesList = await FirestoreDB.getAllNotesData();
+    notesList = await FirestoreDB.getNotesData();
     setState(() {
     });
   }

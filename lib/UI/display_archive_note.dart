@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:fundoo_notes/UI/edit_note.dart';
-import 'package:fundoo_notes/UI/main_screen.dart';
+import 'package:fundoo_notes/UI/view_archive_notes.dart';
 import 'package:fundoo_notes/services/firestore_db.dart';
 import 'package:fundoo_notes/services/my_note_model.dart';
 import 'package:fundoo_notes/style/colors.dart';
 import 'package:fundoo_notes/style/text_style.dart';
 
-class DisplayNote extends StatelessWidget {
+
+class DisplayArchiveNotes extends StatelessWidget {
   final Note note;
-  const DisplayNote({super.key, required this.note});
-
-
+  const DisplayArchiveNotes({super.key, required this.note});
 
   @override
   Widget build(BuildContext context) {
@@ -28,15 +27,7 @@ class DisplayNote extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   _goBack(context),
-
-                  Row(
-                    children: [
-                      _pinNote(), _space(context),
-                      _deleteNote(context), _space(context),
-                      _editNote(context), _space(context),
-                      _archiveNote(context)
-                    ],
-                  )
+                  _unArchiveNote(context)
                 ],
               ),
             ),
@@ -60,31 +51,27 @@ class DisplayNote extends StatelessWidget {
   Widget _goBack(BuildContext context) =>
       InkWell(
           onTap: (){
-            Navigator.push(context, MaterialPageRoute(builder: (context) => const MainRoute()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const ViewArchivedNotes()));
           },
           child: const Icon(Icons.arrow_back, color: Colors.white,)
       );
 
-  // SIZED BOX
+  //SIZED BOX
   Widget _space(BuildContext context) =>
       SizedBox(width: MediaQuery.of(context).size.width*0.04);
 
-  // PINNED NOTE WIDGET
-  Widget _pinNote() =>
-      Icon(Icons.push_pin,color: tabItemColor);
 
   // DELETE NOTE WIDGET
   Widget _deleteNote(BuildContext context) =>
       InkWell(
         onTap: ()async {
-          await FirestoreDB.deleteNote(note.id);
-          // ignore: use_build_context_synchronously
-          Navigator.pop(context);
+          await FirestoreDB.deleteArchivedNote(note.id);
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const ViewArchivedNotes()));
         },
         child: Icon(Icons.delete, color: tabItemColor),
       );
 
-  // EDIT NOTE WIDGET
+  //EDIT NOTE WIDGET
   Widget _editNote(BuildContext context) =>
       InkWell(
           onTap: (){
@@ -92,11 +79,13 @@ class DisplayNote extends StatelessWidget {
           },
           child: Icon(Icons.edit, color: tabItemColor)
       );
-  Widget _archiveNote(BuildContext context) =>
+
+  Widget _unArchiveNote(BuildContext context) =>
       InkWell(
           onTap: ()async {
-            await FirestoreDB.archiveNote(note.title, note.content, note.id);
-            Navigator.pop(context);
-          },
-          child: Icon(Icons.archive_rounded, color: tabItemColor));
+            await FirestoreDB.unArchiveNote(note.title, note.content, note.id);
+            debugPrint(note.id);
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>ViewArchivedNotes()));
+            },
+          child: Icon(Icons.unarchive_rounded, color: tabItemColor));
 }
