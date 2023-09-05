@@ -1,17 +1,13 @@
-
-
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:fundoo_notes/UI/display_archive_note.dart';
-import 'package:fundoo_notes/UI/display_note.dart';
 import 'package:fundoo_notes/UI/side_menu.dart';
 import 'package:fundoo_notes/services/firestore_db.dart';
 import 'package:fundoo_notes/services/my_note_model.dart';
 import 'package:fundoo_notes/style/colors.dart';
 import 'package:fundoo_notes/style/text_style.dart';
-
 
 class ViewArchivedNotes extends StatefulWidget {
   const ViewArchivedNotes({super.key});
@@ -21,7 +17,6 @@ class ViewArchivedNotes extends StatefulWidget {
 }
 
 class _ViewArchivedNotesState extends State<ViewArchivedNotes> {
-
   List<Note> archivedNotesList = [];
   bool isListView = false;
   var viewMode = const Icon(Icons.list_outlined);
@@ -33,14 +28,13 @@ class _ViewArchivedNotesState extends State<ViewArchivedNotes> {
     super.initState();
     getArchivedNotes();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _drawerKey,
       drawer: const SideMenu(),
-
       backgroundColor: allRoutesBG,
-
       body: SafeArea(
         child: Container(
           alignment: Alignment.topLeft,
@@ -71,6 +65,7 @@ class _ViewArchivedNotesState extends State<ViewArchivedNotes> {
       ),
     );
   }
+
   Widget _drawerBarIcon() => IconButton(
       onPressed: () {
         _drawerKey.currentState!.openDrawer();
@@ -79,38 +74,41 @@ class _ViewArchivedNotesState extends State<ViewArchivedNotes> {
 
   // search bar
   Widget _searchBar() => Container(
-    alignment: Alignment.centerLeft,
-    height: MediaQuery.of(context).size.height * 0.5,
-    width: MediaQuery.of(context).size.width * 0.5,
-    decoration: const BoxDecoration(),
-    child: const TextField(
-      decoration: InputDecoration(
-        border: InputBorder.none,
-        hintText: "Archived Notes",
-      ),
-    ),
-  );
+        alignment: Alignment.centerLeft,
+        height: MediaQuery.of(context).size.height * 0.5,
+        width: MediaQuery.of(context).size.width * 0.5,
+        decoration: const BoxDecoration(),
+        child: const TextField(
+          decoration: InputDecoration(
+            border: InputBorder.none,
+            hintText: "Archived Notes",
+          ),
+        ),
+      );
 
   // switch to list/tab view
-  Widget _changeViewMode() =>
-      IconButton(
+  Widget _changeViewMode() => IconButton(
         onPressed: () {
           setState(() {
-            isListView == false ?
-            (isListView = true, viewMode = const Icon(Icons.grid_view_outlined)):
-            (isListView = false, viewMode = const Icon(Icons.list_outlined));
+            isListView == false
+                ? (
+                    isListView = true,
+                    viewMode = const Icon(Icons.grid_view_outlined)
+                  )
+                : (
+                    isListView = false,
+                    viewMode = const Icon(Icons.list_outlined)
+                  );
           });
         },
         icon: viewMode,
       );
 
 // search icon
-  Widget _searchButton() =>
-      IconButton(
-          onPressed: () {}, icon: Icon(Icons.search_rounded, color: buttonsColor));
+  Widget _searchButton() => IconButton(
+      onPressed: () {}, icon: Icon(Icons.search_rounded, color: buttonsColor));
 
-  Widget _displayArchivedNotes() =>
-      Expanded(
+  Widget _displayArchivedNotes() => Expanded(
         child: MasonryGridView.count(
             padding: const EdgeInsets.all(10),
             crossAxisSpacing: 10,
@@ -118,47 +116,43 @@ class _ViewArchivedNotesState extends State<ViewArchivedNotes> {
             itemCount: archivedNotesList.length,
             crossAxisCount: isListView ? 1 : 2,
             itemBuilder: (context, index) => InkWell(
-              onTap: () async{
-                await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => DisplayArchiveNotes(note: archivedNotesList[index])));
-                archivedNotesList = await FirestoreDB.fetchArchiveNotes();
-                setState(() {
-
-                });
-
-              },
-              child: Container(
-                  decoration: BoxDecoration(
-                      color: _colorGenerator(),
-                      border: Border.all(color: Colors.black),
-                      borderRadius: BorderRadius.circular(7.5)),
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        archivedNotesList[index].title,
-                        style: displayHeadingStyle,
-                        textDirection: TextDirection.ltr,
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        archivedNotesList[index].content,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 5,
-                        style: contentStyle,
-                      ),
-                      const SizedBox(height: 10),
-                      // Text(
-                      //     "last modified:\n ${notesList[index].createdTime}",
-                      //     style: subtitleTextStyle),
-                    ],
-                  )
-              ),
-            )
-        ),
+                  onTap: () async {
+                    await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => DisplayArchiveNotes(
+                                note: archivedNotesList[index])));
+                    archivedNotesList = await FirestoreDB.fetchArchiveNotes();
+                    setState(() {});
+                  },
+                  child: Container(
+                      decoration: BoxDecoration(
+                          color: _colorGenerator(),
+                          border: Border.all(color: Colors.black),
+                          borderRadius: BorderRadius.circular(7.5)),
+                      padding: const EdgeInsets.all(10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            archivedNotesList[index].title,
+                            style: displayHeadingStyle,
+                            textDirection: TextDirection.ltr,
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            archivedNotesList[index].content,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 5,
+                            style: contentStyle,
+                          ),
+                          const SizedBox(height: 10),
+                          // Text(
+                          //     "last modified:\n ${notesList[index].createdTime}",
+                          //     style: subtitleTextStyle),
+                        ],
+                      )),
+                )),
       );
 
   Color? _colorGenerator() {
@@ -168,8 +162,6 @@ class _ViewArchivedNotesState extends State<ViewArchivedNotes> {
 
   void getArchivedNotes() async {
     archivedNotesList = await FirestoreDB.fetchArchiveNotes();
-    setState(() {
-    });
+    setState(() {});
   }
 }
-

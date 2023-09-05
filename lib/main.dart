@@ -1,4 +1,3 @@
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:fundoo_notes/UI/login_screen.dart';
@@ -6,15 +5,12 @@ import 'package:fundoo_notes/UI/main_screen.dart';
 import 'package:fundoo_notes/firebase_options.dart';
 import 'package:fundoo_notes/services/login_info.dart';
 
-Future<void> main() async{
-
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MaterialApp(
-      home: MyApp()
-  ));
+  runApp(const MaterialApp(home: MyApp()));
 }
 
 class MyApp extends StatefulWidget {
@@ -25,7 +21,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  bool isLogin = false;
+  late bool isLogin = false;
 
   getLoggedInState() async {
     var getState = await LocalDataSaver.getLogData();
@@ -33,14 +29,13 @@ class _MyAppState extends State<MyApp> {
   }
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     getLoggedInState();
   }
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-
-        home: isLogin ? const MainRoute() : const LoginPage());
+    return MaterialApp(home: isLogin ? const MainRoute() : const LoginPage());
   }
 }

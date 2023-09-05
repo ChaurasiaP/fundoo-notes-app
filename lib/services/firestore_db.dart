@@ -21,8 +21,10 @@ class FirestoreDB {
   static Future<void> createNewNoteFirestore(
       String heading, String content) async {
     final documentRef = FirebaseFirestore.instance
-        .collection("notes").doc(_auth.currentUser!.email)
-        .collection("userNotes").doc();
+        .collection("notes")
+        .doc(_auth.currentUser!.email)
+        .collection("userNotes")
+        .doc();
 
     documentRef.set({
       "id": documentRef.id,
@@ -32,18 +34,17 @@ class FirestoreDB {
     }).then((_) {
       debugPrint("note added successfully");
     });
-
   }
 
   // READ operation
-  static readNote(String id) async {
-    await FirebaseFirestore.instance
-        .collection("notes")
-        .doc(_auth.currentUser!.email)
-        .collection("userNotes")
-        .doc(id)
-        .get();
-  }
+  // static readNote(String id) async {
+  //   await FirebaseFirestore.instance
+  //       .collection("notes")
+  //       .doc(_auth.currentUser!.email)
+  //       .collection("userNotes")
+  //       .doc(id)
+  //       .get();
+  // }
 
   // UPDATE operation
   static Future<void> updateNote(
@@ -93,7 +94,7 @@ class FirestoreDB {
         .then((querySnapshot) {
       for (var element in querySnapshot.docs) {
         Map noteMap = element.data();
-        debugPrint(noteMap["Title"]);
+        // debugPrint(noteMap["Title"]);
         final title = noteMap["Title"];
         final content = noteMap["content"];
         final createdTime = noteMap["date modified"];
@@ -111,6 +112,37 @@ class FirestoreDB {
     return notes;
   }
 
+  static Future<List<Note>> searchNotes(String searchText) async {
+    List<Note> notes = [];
+    await FirebaseFirestore.instance
+        .collection("notes")
+        .doc(_auth.currentUser!.email)
+        .collection("userNotes")
+        .orderBy("date modified", descending: true)
+        .get()
+        .then((querySnapshot) {
+      for (var element in querySnapshot.docs) {
+        Map noteMap = element.data();
+        // debugPrint(noteMap["Title"]);
+        final title = noteMap["Title"];
+        final content = noteMap["content"];
+        final createdTime = noteMap["date modified"];
+        final id = noteMap["id"];
+
+        if (title.toString().contains(searchText) ||
+            content.toString().contains(searchText)) {
+          final note = Note(
+              id: id,
+              pin: false,
+              title: title,
+              content: content,
+              createdTime: createdTime.toString());
+          notes.add(note);
+        }
+      }
+    });
+    return notes;
+  }
 
   // FOR ARCHIVED NOTES
   //  CREATE ARCHIVE NOTE
@@ -119,30 +151,41 @@ class FirestoreDB {
   NAMED userArchivedNotes, TAKING HEADING, CONTENT AND DOC ID AS THE PARAMETERS,
   ALSO DELETING THE SAME NOTE FROM THE userNotes COLLECTION
    */
-  static Future<void> archiveNote(String heading, String content, String id) async {
+  static Future<void> archiveNote(
+      String heading, String content, String id) async {
     final documentRef = FirebaseFirestore.instance
         .collection("notes")
         .doc(_auth.currentUser!.email)
         .collection("userArchivedNotes")
         .doc();
     documentRef.set({
-      "id": id,
+      "id": documentRef.id,
       "Title": heading,
       "content": content,
       "date modified": DateTime.now()
     }).then((_) {
-      FirestoreDB.deleteNote(id);
+      FirestoreDB.deleteNote(id)
+          .then((_) => debugPrint("NOTE ARCHIVED AND REMOVED FROM MAIN LIST"));
     });
   }
 
   // UN- ARCHIVE NOTE
-  static Future<void> unArchiveNote(String heading, String content, String id) async{
-    final docRef = FirebaseFirestore.instance.collection("notes").doc(_auth.currentUser!.email).
-    collection("userNotes").doc();
+  static Future<void> unArchiveNote(
+      String heading, String content, String noteID) async {
+    final docRef = FirebaseFirestore.instance
+        .collection("notes")
+        .doc(_auth.currentUser!.email)
+        .collection("userNotes")
+        .doc();
     docRef.set({
-      "id": id, "Title": heading, "content": content, "date modified": DateTime.now()
-    }).then((_){
-      FirestoreDB.deleteArchivedNote(id);
+      "id": docRef.id,
+      "Title": heading,
+      "content": content,
+      "date modified": DateTime.now()
+    }).then((_) {
+      debugPrint("UN-ARCHIVED NOTE");
+      FirestoreDB.deleteArchivedNote(noteID);
+      debugPrint("ARCHIVED NOTE DELETED FROM COLLECTION");
     });
   }
 
@@ -150,8 +193,10 @@ class FirestoreDB {
   static Future<void> deleteArchivedNote(String id) async {
     try {
       await FirebaseFirestore.instance
-          .collection("notes").doc(_auth.currentUser!.email)
-          .collection("userArchivedNotes").doc(id)
+          .collection("notes")
+          .doc(_auth.currentUser!.email)
+          .collection("userArchivedNotes")
+          .doc(id)
           .delete()
           .then((_) => debugPrint("DATA DELETED SUCCESSFULLY"));
     } on FirebaseException catch (ex) {
@@ -164,8 +209,11 @@ class FirestoreDB {
   static Future<List<Note>> fetchArchiveNotes() async {
     List<Note> notes = [];
     await FirebaseFirestore.instance
-        .collection("notes").doc(_auth.currentUser!.email)
-        .collection("userArchivedNotes").orderBy("date modified", descending: true).get()
+        .collection("notes")
+        .doc(_auth.currentUser!.email)
+        .collection("userArchivedNotes")
+        .orderBy("date modified", descending: true)
+        .get()
         .then((querySnapshot) {
       for (var element in querySnapshot.docs) {
         Map noteMap = element.data();
@@ -187,33 +235,12 @@ class FirestoreDB {
     return notes;
   }
 
-
-  // FOR SEARCHING THE NON ARCHIVED NOTES
-  static Future<List<Note>> searchResult(String query) async {
-    List<Note> searchList = [];
-    await FirebaseFirestore.instance
+  static Future<void> userFeedBack(String message) async {
+    final docRef = await FirebaseFirestore.instance
         .collection("notes")
-        .doc(_auth.currentUser!.email)
-        .collection("userNotes")
-        .orderBy("date modified", descending: true)
-        .get()
-        .then((querySnapshot) {
-      for (var element in querySnapshot.docs) {
-        Map noteMap = element.data();
-        debugPrint(noteMap["Title"]);
-        final title = noteMap["Title"];
-        final content = noteMap["content"];
-        final createdTime = noteMap["date modified"];
-        final id = noteMap["id"];
-        final note = Note(
-            id: id,
-            pin: false,
-            title: title,
-            content: content,
-            createdTime: createdTime.toString());
-        searchList.add(note);
-      }
-    });
-    return searchList;
+        .doc(FirebaseAuth.instance.currentUser!.email)
+        .collection("userFeedback")
+        .doc();
+    docRef.set({"id": docRef.id, "feedback": message, "time": DateTime.now()});
   }
 }

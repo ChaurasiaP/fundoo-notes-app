@@ -36,9 +36,8 @@ class _SearchNoteState extends State<SearchNote> {
         // wrapped into SafeArea widget display content below the notch area
         child: Container(
           alignment: Alignment.topLeft,
-          child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Container(
               // title bar
               height: MediaQuery.of(context).size.height * 0.08,
@@ -49,11 +48,11 @@ class _SearchNoteState extends State<SearchNote> {
 
               //title bar items wrapped under row, since, they are to be displayed in a row
               child: Row(
-              children: <Widget>[
-                _goBack(context),
-                const SizedBox(width: 25),
-                _searchBar(),
-                 // _searchButton()
+                children: <Widget>[
+                  _goBack(context),
+                  const SizedBox(width: 25),
+                  _searchBar(),
+                  // _searchButton()
                 ],
               ),
             ),
@@ -67,94 +66,89 @@ class _SearchNoteState extends State<SearchNote> {
     );
   }
 
-  Widget _goBack(BuildContext context) =>
-      InkWell(
-          onTap: (){
-            Navigator.push(context, MaterialPageRoute(builder: (context) => const MainRoute()));
-          },
-          child: Icon(Icons.arrow_back, color: buttonsColor)
-      );
+  Widget _goBack(BuildContext context) => InkWell(
+      onTap: () {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const MainRoute()));
+      },
+      child: Icon(Icons.arrow_back, color: buttonsColor));
 
   // search bar
   Widget _searchBar() => Container(
-    alignment: Alignment.centerLeft,
-    height: MediaQuery.of(context).size.height * 0.5,
-    width: MediaQuery.of(context).size.width * 0.5,
-    decoration: const BoxDecoration(),
-    child: TextField(
-      onSubmitted: (value) => {
-        fetchResults(value)
-      },
-      textInputAction: TextInputAction.search,
-      decoration: const InputDecoration(
-        border: InputBorder.none,
-        hintText: "Search Your Notes",
-      ),
-    ),
-  );
-  // Widget _searchButton() =>
-  //     IconButton(
-  //         onPressed: () {
-  //           Navigator.push(context, MaterialPageRoute(builder: (context) => const SearchNote()));
-  //         }, icon: Icon(Icons.search_rounded, color: buttonsColor));
-
+        alignment: Alignment.centerLeft,
+        height: MediaQuery.of(context).size.height * 0.5,
+        width: MediaQuery.of(context).size.width * 0.5,
+        decoration: const BoxDecoration(),
+        child: TextField(
+          onSubmitted: (value) => {fetchResults(value)},
+          textInputAction: TextInputAction.search,
+          decoration: const InputDecoration(
+            border: InputBorder.none,
+            hintText: "Search Your Notes",
+          ),
+        ),
+      );
 
   Widget _displaySearchResult() => Expanded(
-    child: MasonryGridView.count(
-        padding: const EdgeInsets.all(10),
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-        itemCount: searchResultsNotes.length,
-        crossAxisCount: 2,
-        itemBuilder: (context, index) => InkWell(
-          onTap: () async{
-            await Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => DisplayNote(note: searchResultsNotes[index])));
-            searchResultsNotes = await FirestoreDB.getNotesData();
-            setState(() {});
+        child: MasonryGridView.count(
+            padding: const EdgeInsets.all(10),
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+            itemCount: searchResultsNotes.length,
+            crossAxisCount: 2,
+            itemBuilder: (context, index) => InkWell(
+                  onTap: () async {
+                    await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                DisplayNote(note: searchResultsNotes[index])));
+                    searchResultsNotes = await FirestoreDB.getNotesData();
+                    setState(() {});
+                  },
+                  child: Container(
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.black),
+                          borderRadius: BorderRadius.circular(7.5)),
+                      padding: const EdgeInsets.all(10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            searchResultsNotes[index].title,
+                            style: displayHeadingStyle,
+                            textDirection: TextDirection.ltr,
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            searchResultsNotes[index].content,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 5,
+                            style: contentStyle,
+                          ),
+                          const SizedBox(height: 10),
+                          // Text(
+                          //     "last modified:\n ${notesList[index].createdTime}",
+                          //     style: subtitleTextStyle),
+                        ],
+                      )),
+                )),
+      );
 
-          },
-          child: Container(
-              decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black),
-                  borderRadius: BorderRadius.circular(7.5)),
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    searchResultsNotes[index].title,
-                    style: displayHeadingStyle,
-                    textDirection: TextDirection.ltr,
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    searchResultsNotes[index].content,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 5,
-                    style: contentStyle,
-                  ),
-                  const SizedBox(height: 10),
-                  // Text(
-                  //     "last modified:\n ${notesList[index].createdTime}",
-                  //     style: subtitleTextStyle),
-                ],
-              )
-          ),
-        )
-    ),
-  );
   void fetchResults(String query) async {
     var result = await FirestoreDB.getNotesData();
-    for(var searchResult in result){
-      if(searchResult.title.toString().toLowerCase().contains(query.toLowerCase().trim()) || searchResult.content.toString().toLowerCase().contains(query.toLowerCase().trim())){
+    for (var searchResult in result) {
+      if (searchResult.title
+              .toString()
+              .toLowerCase()
+              .contains(query.toLowerCase().trim()) ||
+          searchResult.content
+              .toString()
+              .toLowerCase()
+              .contains(query.toLowerCase().trim())) {
         searchResultsNotes.add(searchResult);
       }
     }
-    setState(() {
-    });
+    setState(() {});
   }
-
 }
