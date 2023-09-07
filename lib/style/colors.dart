@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 // initializing some variables which will be used and repeated multiple times throughout
 var searchBarBG = Colors.white70;
-var allRoutesBG = Colors.blue[200];
-var activeTab = Colors.blueAccent[200];
+var allRoutesBG = Colors.blue[50];
+var routesBG = Colors.blue[200];
+var sideMenuBG = Colors.blue[200];
+var activeTab = Colors.blue[700];
 var buttonsColor = Colors.blue.shade900;
 var tabItemColor = Colors.white;
 

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fundoo_notes/UI/main_screen.dart';
@@ -16,6 +18,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  bool isLoading = true;
 
   // controllers to handle user input email and password
   TextEditingController userNameController = TextEditingController();
@@ -28,6 +31,11 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
     userNameController.text = "pranshu1431@gmail.com";
     passwordController.text = "123456";
+    Future.delayed(const Duration(seconds: 3),(){
+      setState(() {
+        isLoading = false;
+      });
+    });
   }
 
   @override

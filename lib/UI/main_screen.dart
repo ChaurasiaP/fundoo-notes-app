@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -23,6 +25,7 @@ class _MainRouteState extends State<MainRoute> {
   var viewMode = const Icon(Icons.list_outlined);
   bool isSync = true;
   Icon syncIcon = Icon(Icons.sync, color: buttonsColor);
+  bool isLoading = false;
 
   // declaring a global key to enable drawer expansion, where required
   final GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
@@ -51,7 +54,7 @@ class _MainRouteState extends State<MainRoute> {
   void initState() {
     super.initState();
     fetchNotes();
-    debugPrint("inside init");
+    // debugPrint("inside init");
   }
 
   @override
@@ -63,7 +66,7 @@ class _MainRouteState extends State<MainRoute> {
       drawer: const SideMenu(),
       // drawer menu-bar ends
 
-      backgroundColor: allRoutesBG,
+      backgroundColor: routesBG,
 
       body: SafeArea(
         // wrapped into SafeArea widget display content below the notch area
@@ -91,7 +94,7 @@ class _MainRouteState extends State<MainRoute> {
               ),
             ),
             const SizedBox(height: 25),
-            _displayNotes(),
+            isLoading ? _displayNotes() : _skeletonNotes(context),
           ]),
         ),
       ),
@@ -189,13 +192,13 @@ class _MainRouteState extends State<MainRoute> {
             )
           : syncIcon);
 
-// search icon
-  Widget _searchButton() => IconButton(
-      onPressed: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const SearchNote()));
-      },
-      icon: Icon(Icons.search_rounded, color: buttonsColor));
+// search icon (currently replaced by sync icon)
+//   Widget _searchButton() => IconButton(
+//       onPressed: () {
+//         Navigator.push(context,
+//             MaterialPageRoute(builder: (context) => const SearchNote()));
+//       },
+//       icon: Icon(Icons.search_rounded, color: buttonsColor));
 
   Widget _displayNotes() => Expanded(
         child: MasonryGridView.count(
@@ -214,33 +217,7 @@ class _MainRouteState extends State<MainRoute> {
                     notesList = await FirestoreDB.getNotesData();
                     setState(() {});
                   },
-                  child: Container(
-                      decoration: BoxDecoration(
-                          color: _colorGenerator(),
-                          border: Border.all(color: Colors.black),
-                          borderRadius: BorderRadius.circular(7.5)),
-                      padding: const EdgeInsets.all(10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            notesList[index].title,
-                            style: displayHeadingStyle,
-                            textDirection: TextDirection.ltr,
-                          ),
-                          const SizedBox(height: 10),
-                          Text(
-                            notesList[index].content,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 6,
-                            style: contentStyle,
-                          ),
-                          const SizedBox(height: 10),
-                          // Text(
-                          //     "last modified:\n ${notesList[index].createdTime}",
-                          //     style: subtitleTextStyle),
-                        ],
-                      )),
+                  child: _notesSection(index),
                 )),
       );
 
@@ -249,8 +226,89 @@ class _MainRouteState extends State<MainRoute> {
     return notesColors[value];
   }
 
+  Widget _notesSection(int index) =>
+      Container(
+          decoration: BoxDecoration(
+              color: _colorGenerator(),
+              border: Border.all(color: Colors.black),
+              borderRadius: BorderRadius.circular(7.5)),
+          padding: const EdgeInsets.all(10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                notesList[index].title,
+                style: displayHeadingStyle,
+                textDirection: TextDirection.ltr,
+              ),
+              const SizedBox(height: 10),
+              Text(
+                notesList[index].content,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 6,
+                style: contentStyle,
+              ),
+              const SizedBox(height: 10),
+              // Text(
+              //     "last modified:\n ${notesList[index].createdTime}",
+              //     style: subtitleTextStyle),
+            ],
+          ));
+
+  Widget _skeleton(int index) =>
+      Container(
+        height: MediaQuery.of(context).size.height*0.2,
+          decoration: BoxDecoration(
+            color: Colors.white,
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(7.5)),
+          padding: const EdgeInsets.all(10),
+        child: Column(
+          children: [
+            _skeletonBody(),
+            const SizedBox(height: 10),
+            _skeletonBody(),
+            const SizedBox(height: 10),
+            _skeletonBody(),
+            const SizedBox(height: 10),
+            _skeletonBody(),
+            const SizedBox(height: 10),
+            _skeletonBody(),
+          ],
+        ),
+          );
   void fetchNotes() async {
+    setState(() {
+      isLoading = false;
+    });
     notesList = await FirestoreDB.getNotesData();
-    setState(() {});
+    setState(() {
+      isLoading = true;
+    });
   }
+
+  Widget _skeletonBody() =>
+    Container(
+      height: MediaQuery.of(context).size.height*0.02,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(7.5),
+          color: Colors.grey[350]
+      ),
+    );
+
+  Widget _skeletonNotes(BuildContext context) =>
+    Expanded(
+      child: MasonryGridView.count(
+          padding: const EdgeInsets.all(10),
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+          itemCount: notesList.length,
+          crossAxisCount: isListView ? 1 : 2,
+          itemBuilder: (context, index) => InkWell(
+            onTap: () {
+              setState(() {});
+            },
+            child: _skeleton(index),
+          )),
+    );
 }

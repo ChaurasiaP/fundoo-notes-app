@@ -19,11 +19,12 @@ class _SideMenuState extends State<SideMenu> {
   TextEditingController feedbackController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool isActiveTab = false;
+  bool onMainRoute = true;
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: allRoutesBG,
+      backgroundColor: sideMenuBG,
       child: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -32,7 +33,7 @@ class _SideMenuState extends State<SideMenu> {
               DrawerHeader(
                 // always shown on left side of the menu bar
 
-                decoration: BoxDecoration(color: allRoutesBG),
+                decoration: BoxDecoration(color: sideMenuBG),
                 child: Center(
                   child: Column(
                     children: [
