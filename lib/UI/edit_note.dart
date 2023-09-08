@@ -24,7 +24,7 @@ class _EditNoteState extends State<EditNote> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: allRoutesBG,
+      backgroundColor: routesBG,
       resizeToAvoidBottomInset: false,
       body: isLoading
           ? const Center(child: CircularProgressIndicator())

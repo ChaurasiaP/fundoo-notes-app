@@ -1,5 +1,6 @@
 // CRUD operations with firebase
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,7 +8,9 @@ import 'package:fundoo_notes/services/my_note_model.dart';
 
 class FirestoreDB {
   static final FirebaseAuth _auth = FirebaseAuth.instance;
-
+  static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  // static bool hasMoreData = true;
+  static DocumentSnapshot? lastDocument;
   /*
   WHAT IS USED IN THE CODE AND WHY AND HOW:-
   FirebaseFirestore.instance.collection("TAKES THE DATABASE WHICH IS TO BE CONSIDERED FOR THE OPERATION").doc("TAKES THE DETAILS OF THE USER, FOR WHOM THE DATA IS TO BE ACCESSED").
@@ -20,7 +23,7 @@ class FirestoreDB {
   // CREATE new note method, stored at firebase -> cloud firestore
   static Future<void> createNewNoteFirestore(
       String heading, String content) async {
-    final documentRef = FirebaseFirestore.instance
+    final documentRef = _firestore
         .collection("notes")
         .doc(_auth.currentUser!.email)
         .collection("userNotes")
@@ -38,7 +41,7 @@ class FirestoreDB {
 
   // READ operation
   // static readNote(String id) async {
-  //   await FirebaseFirestore.instance
+  //   await _firestore
   //       .collection("notes")
   //       .doc(_auth.currentUser!.email)
   //       .collection("userNotes")
@@ -50,7 +53,7 @@ class FirestoreDB {
   static Future<void> updateNote(
       String title, String content, String id) async {
     try {
-      await FirebaseFirestore.instance
+      await _firestore
           .collection("notes")
           .doc(_auth.currentUser!.email)
           .collection("userNotes")
@@ -69,7 +72,7 @@ class FirestoreDB {
   // DELETE operation
   static Future<void> deleteNote(String id) async {
     try {
-      await FirebaseFirestore.instance
+      await _firestore
           .collection("notes")
           .doc(_auth.currentUser!.email)
           .collection("userNotes")
@@ -93,7 +96,7 @@ class FirestoreDB {
         .get()
         .then((querySnapshot) {
       for (var element in querySnapshot.docs) {
-        Map noteMap = element.data();
+        Map<String, dynamic> noteMap = element.data();
         // debugPrint(noteMap["Title"]);
         final title = noteMap["Title"];
         final content = noteMap["content"];
@@ -112,9 +115,73 @@ class FirestoreDB {
     return notes;
   }
 
+  // static Future<List<Note>> getPagination() async{
+  //
+  //   List<Note> noteslist = [];
+  //   DocumentSnapshot? lastDoc;
+  //   late QuerySnapshot notesSnap;
+  //   bool hasMore = true;
+  //   if(hasMore) {
+  //     if (lastDoc == null) {
+  //       notesSnap =
+  //       await _firestore.collection("notes").doc(_auth.currentUser!.email).
+  //       collection("userNotes").orderBy("date modified", descending: true)
+  //           .limit(10).get()
+  //           .then((value) {
+  //         for (var element in value.docs) {
+  //           Map<String, dynamic> noteMap = element.data();
+  //           final title = noteMap["Title"];
+  //           final content = noteMap["content"];
+  //           final createdTime = noteMap["date modified"];
+  //           final id = noteMap["id"];
+  //
+  //           final note = Note(
+  //               id: id,
+  //               pin: false,
+  //               title: title,
+  //               content: content,
+  //               createdTime: createdTime.toString());
+  //           noteslist.add(note);
+  //           lastDoc = notesSnap.docs.last;
+  //           noteslist.add(notesSnap.docs as Note);
+  //         }
+  //         return notesSnap;
+  //       });
+  //     }else{
+  //       notesSnap = await _firestore.collection("notes").doc(_auth.currentUser!.email).
+  //       collection("userNotes").orderBy("date modified", descending: true)
+  //           .limit(10).startAfterDocument(lastDoc).get()
+  //           .then((value) {
+  //         for (var element in value.docs) {
+  //           Map<String, dynamic> noteMap = element.data();
+  //           final title = noteMap["Title"];
+  //           final content = noteMap["content"];
+  //           final createdTime = noteMap["date modified"];
+  //           final id = noteMap["id"];
+  //
+  //           final note = Note(
+  //               id: id,
+  //               pin: false,
+  //               title: title,
+  //               content: content,
+  //               createdTime: createdTime.toString());
+  //           noteslist.add(note);
+  //           lastDoc = notesSnap.docs.last;
+  //           noteslist.add(notesSnap.docs as Note);
+  //         }
+  //         return notesSnap;
+  //       });
+  //     }
+  //     if(notesSnap.docs.length <10){
+  //       hasMore = false;
+  //     }
+  //   }
+  //   return noteslist;
+  // }
+
   static Future<List<Note>> searchNotes(String searchText) async {
     List<Note> notes = [];
-    await FirebaseFirestore.instance
+    await _firestore
         .collection("notes")
         .doc(_auth.currentUser!.email)
         .collection("userNotes")
@@ -153,7 +220,7 @@ class FirestoreDB {
    */
   static Future<void> archiveNote(
       String heading, String content, String id) async {
-    final documentRef = FirebaseFirestore.instance
+    final documentRef = _firestore
         .collection("notes")
         .doc(_auth.currentUser!.email)
         .collection("userArchivedNotes")
@@ -172,7 +239,7 @@ class FirestoreDB {
   // UN- ARCHIVE NOTE
   static Future<void> unArchiveNote(
       String heading, String content, String noteID) async {
-    final docRef = FirebaseFirestore.instance
+    final docRef = _firestore
         .collection("notes")
         .doc(_auth.currentUser!.email)
         .collection("userNotes")
@@ -192,7 +259,7 @@ class FirestoreDB {
   // DELETE ARCHIVED NOTE
   static Future<void> deleteArchivedNote(String id) async {
     try {
-      await FirebaseFirestore.instance
+      await _firestore
           .collection("notes")
           .doc(_auth.currentUser!.email)
           .collection("userArchivedNotes")
@@ -208,7 +275,7 @@ class FirestoreDB {
   // READ THE ARCHIVED NOTE
   static Future<List<Note>> fetchArchiveNotes() async {
     List<Note> notes = [];
-    await FirebaseFirestore.instance
+    await _firestore
         .collection("notes")
         .doc(_auth.currentUser!.email)
         .collection("userArchivedNotes")
@@ -236,11 +303,28 @@ class FirestoreDB {
   }
 
   static Future<void> userFeedBack(String message) async {
-    final docRef = await FirebaseFirestore.instance
+    final docRef = await _firestore
         .collection("notes")
         .doc(FirebaseAuth.instance.currentUser!.email)
         .collection("userFeedback")
         .doc();
     docRef.set({"id": docRef.id, "feedback": message, "time": DateTime.now()});
   }
+
+  // static Future<void> reminderNotes(String heading, String content, String id) async{
+  //   final docRef = await _firestore.collection("userNotes").doc(_auth.currentUser!.email).collection("reminderNotes").doc();
+  //   docRef.set({
+  //     "id": docRef.id,
+  //     "title": heading,
+  //     "content": content,
+  //     "date" : DateTime.now()
+  //   });
+  // }
+  // static Future<void> getReminderNotes(String id) async{
+  //   List<Note> reminderNotes = [];
+  //   final docRef =
+  // }
 }
+
+
+

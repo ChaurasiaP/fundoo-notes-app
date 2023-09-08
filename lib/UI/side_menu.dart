@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fundoo_notes/UI/login_screen.dart';
 import 'package:fundoo_notes/UI/main_screen.dart';
@@ -174,7 +175,7 @@ class _SideMenuState extends State<SideMenu> {
 
   Widget _signOut(BuildContext context) => TextButton(
       style: buttonStyle,
-      onPressed: () {
+      onPressed: (){
         LocalDataSaver.saveLogData(false);
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) => const LoginPage()));

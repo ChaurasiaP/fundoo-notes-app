@@ -15,7 +15,7 @@ class DisplayNote extends StatelessWidget {
   Widget build(BuildContext context) {
     late bool isLoading = false;
     return Scaffold(
-      backgroundColor: allRoutesBG,
+      backgroundColor: routesBG,
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : SafeArea(
@@ -110,7 +110,8 @@ class DisplayNote extends StatelessWidget {
   Widget _archiveNote(BuildContext context) => InkWell(
       onTap: () async {
         await FirestoreDB.archiveNote(note.title, note.content, note.id);
-        Navigator.push(
+        Future.delayed(Duration(seconds: 4));
+        Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => MainRoute()));
       },
       child: Icon(Icons.archive_rounded, color: tabItemColor));

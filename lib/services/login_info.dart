@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class LocalDataSaver{
   static String emailKey = "EMAILKEY";
   static String logKey = "LOGKEY";
-  static List<Note> localStorageNotes = [];
+  // static List<Note> localStorageNotes = [];
 
   static Future<bool?> saveEmail(String? email) async{
     SharedPreferences preferences = await SharedPreferences.getInstance();

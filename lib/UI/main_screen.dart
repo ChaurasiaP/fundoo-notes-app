@@ -1,5 +1,8 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -25,7 +28,8 @@ class _MainRouteState extends State<MainRoute> {
   var viewMode = const Icon(Icons.list_outlined);
   bool isSync = true;
   Icon syncIcon = Icon(Icons.sync, color: buttonsColor);
-  bool isLoading = false;
+  bool isLoading = true;
+
 
   // declaring a global key to enable drawer expansion, where required
   final GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
@@ -49,6 +53,7 @@ class _MainRouteState extends State<MainRoute> {
   Future readAllNote() async {
     // await FirestoreDB.getAllNotesData("as");
   }
+
 
   @override
   void initState() {
@@ -94,7 +99,7 @@ class _MainRouteState extends State<MainRoute> {
               ),
             ),
             const SizedBox(height: 25),
-            isLoading ? _displayNotes() : _skeletonNotes(context),
+            isLoading? _skeletonNotes(context) : _displayNotes(),
           ]),
         ),
       ),
@@ -255,35 +260,11 @@ class _MainRouteState extends State<MainRoute> {
             ],
           ));
 
-  Widget _skeleton(int index) =>
-      Container(
-        height: MediaQuery.of(context).size.height*0.2,
-          decoration: BoxDecoration(
-            color: Colors.white,
-              border: Border.all(color: Colors.grey),
-              borderRadius: BorderRadius.circular(7.5)),
-          padding: const EdgeInsets.all(10),
-        child: Column(
-          children: [
-            _skeletonBody(),
-            const SizedBox(height: 10),
-            _skeletonBody(),
-            const SizedBox(height: 10),
-            _skeletonBody(),
-            const SizedBox(height: 10),
-            _skeletonBody(),
-            const SizedBox(height: 10),
-            _skeletonBody(),
-          ],
-        ),
-          );
   void fetchNotes() async {
-    setState(() {
-      isLoading = false;
-    });
+
     notesList = await FirestoreDB.getNotesData();
     setState(() {
-      isLoading = true;
+      isLoading = false;
     });
   }
 
@@ -311,4 +292,27 @@ class _MainRouteState extends State<MainRoute> {
             child: _skeleton(index),
           )),
     );
+
+  Widget _skeleton(int index) =>
+      Container(
+        height: MediaQuery.of(context).size.height*0.2,
+        decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: Colors.grey),
+            borderRadius: BorderRadius.circular(7.5)),
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          children: [
+            _skeletonBody(),
+            const SizedBox(height: 10),
+            _skeletonBody(),
+            const SizedBox(height: 10),
+            _skeletonBody(),
+            const SizedBox(height: 10),
+            _skeletonBody(),
+            const SizedBox(height: 10),
+            _skeletonBody(),
+          ],
+        ),
+      );
 }

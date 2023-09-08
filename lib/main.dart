@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fundoo_notes/UI/login_screen.dart';
 import 'package:fundoo_notes/UI/main_screen.dart';
 import 'package:fundoo_notes/firebase_options.dart';
+import 'package:fundoo_notes/services/firebase_api.dart';
 import 'package:fundoo_notes/services/login_info.dart';
 import 'package:fundoo_notes/style/splash_screen.dart';
 
@@ -13,6 +14,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await FirebaseMessagingAPI().initNotifications();
   runApp(const MaterialApp(home: MyApp()));
 }
 
@@ -40,8 +42,10 @@ class _MyAppState extends State<MyApp> {
     getLoggedInState();
   }
 
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: SplashScreen());
+    return MaterialApp(
+        home: SplashScreen());
   }
 }

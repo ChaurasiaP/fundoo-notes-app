@@ -34,7 +34,7 @@ class _ViewArchivedNotesState extends State<ViewArchivedNotes> {
     return Scaffold(
       key: _drawerKey,
       drawer: const SideMenu(),
-      backgroundColor: allRoutesBG,
+      backgroundColor: routesBG,
       body: SafeArea(
         child: Container(
           alignment: Alignment.topLeft,

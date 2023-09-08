@@ -22,7 +22,7 @@ class _AddNewNoteState extends State<AddNewNote> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: allRoutesBG,
+      backgroundColor: routesBG,
       resizeToAvoidBottomInset: false,
       // to avoid overflow while opening keyboard
       body: SafeArea(

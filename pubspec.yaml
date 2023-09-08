@@ -42,6 +42,7 @@ dependencies:
   shared_preferences: ^2.2.1
   sqflite: ^2.3.0
   flutter_offline: ^3.0.0
+  firebase_messaging: ^14.6.7
 
 
 dev_dependencies:

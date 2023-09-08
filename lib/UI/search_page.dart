@@ -30,7 +30,7 @@ class _SearchNoteState extends State<SearchNote> {
       drawer: const SideMenu(),
       // drawer menu-bar ends
 
-      backgroundColor: allRoutesBG,
+      backgroundColor: routesBG,
 
       body: SafeArea(
         // wrapped into SafeArea widget display content below the notch area
@@ -57,7 +57,7 @@ class _SearchNoteState extends State<SearchNote> {
               ),
             ),
             const SizedBox(height: 25),
-            const Text("Search Results"),
+            const Text("Search Results:"),
             const SizedBox(height: 25),
             _displaySearchResult()
           ]),
@@ -107,7 +107,9 @@ class _SearchNoteState extends State<SearchNote> {
                     setState(() {});
                   },
                   child: Container(
+                    // color: allRoutesBG,
                       decoration: BoxDecoration(
+                        color: allRoutesBG,
                           border: Border.all(color: Colors.black),
                           borderRadius: BorderRadius.circular(7.5)),
                       padding: const EdgeInsets.all(10),

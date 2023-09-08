@@ -14,7 +14,7 @@ class DisplayArchiveNotes extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: allRoutesBG,
+      backgroundColor: routesBG,
       body: SafeArea(
         child: Column(
           children: [
