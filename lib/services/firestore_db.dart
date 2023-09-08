@@ -250,8 +250,8 @@ class FirestoreDB {
       "content": content,
       "date modified": DateTime.now()
     }).then((_) {
+       FirestoreDB.deleteArchivedNote(noteID);
       debugPrint("UN-ARCHIVED NOTE");
-      FirestoreDB.deleteArchivedNote(noteID);
       debugPrint("ARCHIVED NOTE DELETED FROM COLLECTION");
     });
   }
@@ -310,20 +310,6 @@ class FirestoreDB {
         .doc();
     docRef.set({"id": docRef.id, "feedback": message, "time": DateTime.now()});
   }
-
-  // static Future<void> reminderNotes(String heading, String content, String id) async{
-  //   final docRef = await _firestore.collection("userNotes").doc(_auth.currentUser!.email).collection("reminderNotes").doc();
-  //   docRef.set({
-  //     "id": docRef.id,
-  //     "title": heading,
-  //     "content": content,
-  //     "date" : DateTime.now()
-  //   });
-  // }
-  // static Future<void> getReminderNotes(String id) async{
-  //   List<Note> reminderNotes = [];
-  //   final docRef =
-  // }
 }
 
 

@@ -162,6 +162,8 @@ class _ViewArchivedNotesState extends State<ViewArchivedNotes> {
 
   void getArchivedNotes() async {
     archivedNotesList = await FirestoreDB.fetchArchiveNotes();
-    setState(() {});
+    setState(() {
+
+    });
   }
 }

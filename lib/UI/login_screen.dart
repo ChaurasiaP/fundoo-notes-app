@@ -28,14 +28,15 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     // TODO: implement initState
-    super.initState();
-    userNameController.text = "pranshu1431@gmail.com";
-    passwordController.text = "123456";
-    Future.delayed(const Duration(seconds: 3),(){
+    isLoading = true;
+    Future.delayed(const Duration(seconds: 3), (){
       setState(() {
         isLoading = false;
       });
     });
+    super.initState();
+    userNameController.text = "pranshu1431@gmail.com";
+    passwordController.text = "123456";
   }
 
   @override
@@ -45,36 +46,34 @@ class _LoginPageState extends State<LoginPage> {
       // to avoid pixel overflow while opening the keyboard
 
       appBar: AppBar(
-        title: const Text("Login Page"),
+        title: const Text("Let's Begin!"),
       ),
-      body: _page(),
+      body: isLoading ? const Center(child: CircularProgressIndicator()) : _page(),
       backgroundColor: allRoutesBG,
     );
   }
 
   // function _page will contain icon, text-fields to take email and password and other buttons
   Widget _page() => SingleChildScrollView(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25.0),
-            child: Column(
-              children: [
-                Padding(
-                    padding: EdgeInsets.only(
-                        top: MediaQuery.of(context).size.height * 0.02),
-                    child: _icon()),
-                Padding(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 25.0),
+          child: Column(
+            children: [
+              Padding(
+                  padding: EdgeInsets.only(
+                      top: MediaQuery.of(context).size.height * 0.02),
+                  child: _icon()),
+              Padding(
+                padding: const EdgeInsets.only(top: 10, bottom: 10),
+                child: _loginField(),
+              ),
+              Padding(
                   padding: const EdgeInsets.only(top: 10, bottom: 10),
-                  child: _loginField(),
-                ),
-                Padding(
-                    padding: const EdgeInsets.only(top: 10, bottom: 10),
-                    child: _passwordField()),
-                Padding(
-                    padding: const EdgeInsets.only(top: 15),
-                    child: _actionButtons())
-              ],
-            ),
+                  child: _passwordField()),
+              Padding(
+                  padding: const EdgeInsets.only(top: 15),
+                  child: _actionButtons())
+            ],
           ),
         ),
       );
@@ -105,7 +104,7 @@ class _LoginPageState extends State<LoginPage> {
       style: contentStyle,
       decoration: _loginPageDecoration("Enter your password"));
 
-  Widget _actionButtons() => Column(
+  Widget _actionButtons() => Column( // sign up, forgot password and sign in buttons
         children: [
           // sign in button
           Column(

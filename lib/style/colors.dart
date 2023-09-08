@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 // initializing some variables which will be used and repeated multiple times throughout
@@ -22,5 +24,9 @@ List<Color?> notesColors = [
   Colors.indigoAccent[100],
   Colors.deepOrangeAccent[100]
 ];
+Color? colorGenerator() {
+  var value = Random().nextInt(notesColors.length);
+  return notesColors[value];
+}
 
 var sideMenuHeader = const LinearGradient(colors: [Colors.lightBlueAccent,Colors.lightGreenAccent, Colors.redAccent], begin: Alignment.bottomLeft, end: Alignment.topRight);

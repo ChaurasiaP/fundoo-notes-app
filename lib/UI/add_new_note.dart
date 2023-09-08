@@ -12,25 +12,30 @@ class AddNewNote extends StatefulWidget {
 }
 
 class _AddNewNoteState extends State<AddNewNote> {
-  // List<Note> notesList = Note.getSampleNotes();
-
+  /*
+   TextEditingController objects to control the text input in their respective
+   text fields they are assigned
+   */
   TextEditingController headingController = TextEditingController();
   TextEditingController notesContentController = TextEditingController();
 
+  // to show a circular progress indicator while the route loads
   bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: routesBG,
-      resizeToAvoidBottomInset: false,
+
       // to avoid overflow while opening keyboard
+      resizeToAvoidBottomInset: false,
+
       body: SafeArea(
         child: isLoading
             ? const Center(child: CircularProgressIndicator())
             : Column(
                 children: [
-                  Container(
+                  Container(    //title bar of the route
                     padding: const EdgeInsets.all(12),
                     height: MediaQuery.of(context).size.height * 0.08,
                     width: MediaQuery.of(context).size.width,

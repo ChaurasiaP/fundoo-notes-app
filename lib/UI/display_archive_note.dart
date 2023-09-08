@@ -74,18 +74,11 @@ class DisplayArchiveNotes extends StatelessWidget {
         child: Icon(Icons.delete, color: tabItemColor),
       );
 
-  //EDIT NOTE WIDGET
-  Widget _editNote(BuildContext context) => InkWell(
-      onTap: () {
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => EditNote(note: note)));
-      },
-      child: Icon(Icons.edit, color: tabItemColor));
 
   Widget _unArchiveNote(BuildContext context) => InkWell(
       onTap: () async {
         await FirestoreDB.unArchiveNote(note.title, note.content, note.id);
-        Navigator.push(context,
+        Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) => const ViewArchivedNotes()));
       },
       child: Icon(Icons.unarchive_rounded, color: tabItemColor));

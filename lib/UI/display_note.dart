@@ -110,8 +110,7 @@ class DisplayNote extends StatelessWidget {
   Widget _archiveNote(BuildContext context) => InkWell(
       onTap: () async {
         await FirestoreDB.archiveNote(note.title, note.content, note.id);
-        Future.delayed(Duration(seconds: 4));
-        Navigator.pushReplacement(
+        Navigator.push(
             context, MaterialPageRoute(builder: (context) => MainRoute()));
       },
       child: Icon(Icons.archive_rounded, color: tabItemColor));
